@@ -1,0 +1,3 @@
+https://lsio-ci.ams3.digitaloceanspaces.com/qemu-aarch64-static
+https://lsio-ci.ams3.digitaloceanspaces.com/qemu-arm-static
+https://github.com/meefik/linuxdeploy/blob/master/app/src/main/assets/bin/arm/qemu-i386-static

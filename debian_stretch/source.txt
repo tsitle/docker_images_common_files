@@ -1,0 +1,4 @@
+https://github.com/debuerreotype/docker-debian-artifacts/tree/dist-amd64/stretch/rootfs.tar.xz
+https://github.com/debuerreotype/docker-debian-artifacts/tree/dist-arm32v7/stretch/rootfs.tar.xz
+https://github.com/debuerreotype/docker-debian-artifacts/tree/dist-arm64v8/stretch/rootfs.tar.xz
+https://github.com/debuerreotype/docker-debian-artifacts/tree/dist-i386/stretch/rootfs.tar.xz
