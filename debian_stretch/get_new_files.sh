@@ -75,9 +75,9 @@ function _getRemoteFile() {
 # ----------------------------------------------------------
 
 LVAR_DEBIAN_RELEASE="stretch"
-LVAR_DEBIAN_VERSION="9.11"
+LVAR_DEBIAN_VERSION="9.13"
 #LVAR_DEBIAN_RELEASE="buster"
-#LVAR_DEBIAN_VERSION="10.02"
+#LVAR_DEBIAN_VERSION="10.5"
 
 [ ! -d tmpdown ] && mkdir tmpdown
 
