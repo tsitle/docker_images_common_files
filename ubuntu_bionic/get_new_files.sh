@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #
-# by TS, Feb 2020
+# by TS, Sep 2020
 #
 
 VAR_MYNAME="$(basename "$0")"
@@ -27,7 +27,7 @@ function sha256sum_poly() {
 # @param string $1 Filename
 # @param bool $2 (Optional) Output error on SHA256.err404? Default=true
 function _getRemoteFile() {
-	[ -z "$LVAR_GITHUB_BASE" ] && return 1
+	[ -z "$LVAR_CANONICAL_BASE" ] && return 1
 	[ -z "$1" ] && return 1
 	if [ ! -f "tmpdown/$1" -o ! -f "tmpdown/$1.sha256" ]; then
 		local TMP_DN="$(dirname "$1")"
@@ -37,10 +37,19 @@ function _getRemoteFile() {
 			}
 		fi
 		if [ ! -f "tmpdown/$1.sha256" ]; then
-			echo -e "\nDownloading file '$1.sha256'...\n"
-			curl -L \
-					-o "tmpdown/$1.sha256" \
-					"${LVAR_GITHUB_BASE}/$1.sha256" || return 1
+			if [ -z "$LVAR_SHASUMS" ]; then
+				echo -e "\nDownloading file 'SHA256SUMS'...\n"
+				curl -L \
+						-o "tmpdown/all.sha256" \
+						"${LVAR_CANONICAL_BASE}/SHA256SUMS" || return 1
+				export LVAR_SHASUMS="$(cat "tmpdown/all.sha256")"
+				rm "tmpdown/all.sha256"
+			fi
+			echo "$LVAR_SHASUMS" | grep -q -e " *$1$" || {
+				echo "Could not find original SHA256 for file. Aborting." >>/dev/stderr
+				return 1
+			}
+			echo "$LVAR_SHASUMS" | grep -e " *$1$" > "tmpdown/$1.sha256" || return 1
 		fi
 
 		local TMP_SHA256EXP="$(cat "tmpdown/$1.sha256" | cut -f1 -d\ )"
@@ -58,7 +67,7 @@ function _getRemoteFile() {
 		echo -e "\nDownloading file '$1'...\n"
 		curl -L \
 				-o "tmpdown/$1" \
-				"${LVAR_GITHUB_BASE}/$1" || return 1
+				"${LVAR_CANONICAL_BASE}/$1" || return 1
 		local TMP_SHA256CUR="$(sha256sum_poly "tmpdown/$1" | cut -f1 -d\ )"
 		if [ "$TMP_SHA256EXP" != "$TMP_SHA256CUR" ]; then
 			echo -e "\nExpected SHA256 != current SHA256. Aborting." >>/dev/stderr
@@ -74,19 +83,20 @@ function _getRemoteFile() {
 
 # ----------------------------------------------------------
 
-LVAR_DEBIAN_RELEASE="stretch"
-LVAR_DEBIAN_VERSION="9.13"
-#LVAR_DEBIAN_RELEASE="buster"
-#LVAR_DEBIAN_VERSION="10.5"
+LVAR_UBUNTU_RELEASE="bionic"
+LVAR_UBUNTU_VERSION="18.04.5"
+
+LVAR_SHASUMS=""
 
 [ ! -d tmpdown ] && mkdir tmpdown
 
-for LVAR_DEBIAN_DIST in amd64 arm32v7 arm64v8 i386; do
-	LVAR_GITHUB_BASE="https://raw.githubusercontent.com/debuerreotype/docker-debian-artifacts/dist-$LVAR_DEBIAN_DIST/$LVAR_DEBIAN_RELEASE"
-	echo -e "\n - src: '$LVAR_GITHUB_BASE'"
-	_getRemoteFile rootfs.tar.xz || break
-	TMP_FN_OUT="rootfs-debian_${LVAR_DEBIAN_RELEASE}_${LVAR_DEBIAN_VERSION}-${LVAR_DEBIAN_DIST}.tar.xz"
-	mv "tmpdown/rootfs.tar.xz" "$TMP_FN_OUT" || break
+for LVAR_UBUNTU_DIST in amd64 armhf arm64 i386; do
+	LVAR_CANONICAL_BASE="https://partner-images.canonical.com/core/$LVAR_UBUNTU_RELEASE/current"
+	echo -e "\n - src: [$LVAR_UBUNTU_DIST] '$LVAR_CANONICAL_BASE'"
+	TMP_FN_INP="ubuntu-$LVAR_UBUNTU_RELEASE-core-cloudimg-$LVAR_UBUNTU_DIST-root.tar.gz"
+	_getRemoteFile "$TMP_FN_INP" || break
+	TMP_FN_OUT="ubuntu-$LVAR_UBUNTU_RELEASE-$LVAR_UBUNTU_VERSION-core-cloudimg-$LVAR_UBUNTU_DIST-root.tgz"
+	mv "tmpdown/$TMP_FN_INP" "$TMP_FN_OUT" || break
 	md5sum_poly "$TMP_FN_OUT" > "$TMP_FN_OUT.md5" || break
 done
 
