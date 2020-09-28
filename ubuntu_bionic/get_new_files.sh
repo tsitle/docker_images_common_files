@@ -95,6 +95,12 @@ for LVAR_UBUNTU_DIST in amd64 armhf arm64 i386; do
 	echo -e "\n - src: [$LVAR_UBUNTU_DIST] '$LVAR_CANONICAL_BASE'"
 	TMP_FN_INP="ubuntu-$LVAR_UBUNTU_RELEASE-core-cloudimg-$LVAR_UBUNTU_DIST-root.tar.gz"
 	_getRemoteFile "$TMP_FN_INP" || break
+	#
+	if [ "$LVAR_UBUNTU_DIST" = "armhf" ]; then
+		LVAR_UBUNTU_DIST="arm32v7"
+	elif [ "$LVAR_UBUNTU_DIST" = "arm64" ]; then
+		LVAR_UBUNTU_DIST="arm64v8"
+	fi
 	TMP_FN_OUT="ubuntu-$LVAR_UBUNTU_RELEASE-$LVAR_UBUNTU_VERSION-core-cloudimg-$LVAR_UBUNTU_DIST-root.tgz"
 	mv "tmpdown/$TMP_FN_INP" "$TMP_FN_OUT" || break
 	md5sum_poly "$TMP_FN_OUT" > "$TMP_FN_OUT.md5" || break
