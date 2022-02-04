@@ -1,0 +1,4 @@
+https://github.com/debuerreotype/docker-debian-artifacts/tree/dist-amd64/bullseye/rootfs.tar.xz
+https://github.com/debuerreotype/docker-debian-artifacts/tree/dist-arm32v7/bullseye/rootfs.tar.xz
+https://github.com/debuerreotype/docker-debian-artifacts/tree/dist-arm64v8/bullseye/rootfs.tar.xz
+https://github.com/debuerreotype/docker-debian-artifacts/tree/dist-i386/bullseye/rootfs.tar.xz
