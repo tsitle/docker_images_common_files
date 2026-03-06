@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #
-# by TS, Feb 2020, Mar 2025
+# by TS, Feb 2020, Mar 2025, Mar 2026
 #
 
 VAR_MYNAME="$(basename "$0")"
@@ -53,7 +53,7 @@ function _getRemoteFile() {
 #LVAR_DEBIAN_RELEASE="bullseye"
 #LVAR_DEBIAN_VERSION="11.2"
 LVAR_DEBIAN_RELEASE="bookworm"
-LVAR_DEBIAN_VERSION="12.9"
+LVAR_DEBIAN_VERSION="12.13"
 
 [ ! -d tmpdown ] && mkdir tmpdown
 
